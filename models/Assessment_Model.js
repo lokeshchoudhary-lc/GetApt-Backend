@@ -15,6 +15,11 @@ const AssessmentSchema = new mongoose.Schema({
     enum: ['', '1', '2', '3'],
     default: '',
   },
+  FromComapny: { type: mongoose.Schema.Types.ObjectId },
+  CreatedBy: {
+    CreatedById: { type: mongoose.Schema.Types.ObjectId },
+    Name: { type: String },
+  },
 });
 
 module.exports = mongoose.model('assessment', AssessmentSchema);
