@@ -4,12 +4,6 @@ const Company = new mongoose.Schema({
   Name: {
     type: String,
   },
-  Email: {
-    type: String,
-  },
-  Contact: {
-    type: String,
-  },
   Website: {
     type: String,
   },
@@ -19,7 +13,12 @@ const Company = new mongoose.Schema({
   NumberOfEmployees: {
     type: String,
   },
-  Address: [String],
+  Country: {
+    type: String,
+  },
+  City: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model('company', Company);

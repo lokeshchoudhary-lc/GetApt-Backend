@@ -8,11 +8,9 @@ const AnswerSheet = new mongoose.Schema({
   },
   AnswerTypeA: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'answersheet_type_a',
   },
   AnswerTypeB: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'answersheet_type_b', // problem : more bandwidth , may not interact
   },
 });
 
