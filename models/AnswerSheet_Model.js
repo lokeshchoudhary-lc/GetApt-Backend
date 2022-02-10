@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 
 const AnswerSheet = new mongoose.Schema({
-  FromAssessment: { type: mongoose.Schema.Types.ObjectId },
-  Candidate: {
-    CandidateId: { type: mongoose.Schema.Types.ObjectId },
-    Name: { type: String },
+  fromAssessment: { type: mongoose.Schema.Types.ObjectId },
+  candidate: {
+    candidateId: { type: mongoose.Schema.Types.ObjectId },
+    name: { type: String },
   },
-  AnswerTypeA: {
+  answerTypeA: {
     type: mongoose.Schema.Types.ObjectId,
   },
-  AnswerTypeB: {
+  answerTypeB: {
     type: mongoose.Schema.Types.ObjectId,
   },
 });

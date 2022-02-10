@@ -1,50 +1,50 @@
 const mongoose = require('mongoose');
 
 const Candidate = new mongoose.Schema({
-  Name: {
+  name: {
     type: String,
   },
-  Email: {
+  email: {
     type: String,
   },
-  Contact: {
+  contact: {
     type: String,
   },
-  ExperienceStatus: {
-    enum: ['WorkingProfessional', 'Fresher'],
+  experienceStatus: {
+    enum: ['workingProfessional', 'fresher'],
     type: String,
-    default: 'Fresher',
+    default: 'fresher',
   },
-  WorkExperience: {
+  workExperience: {
     type: String,
   },
-  EducationInfo: [
+  educationInfo: [
     {
-      Degree: {
+      degree: {
         type: String,
       },
-      Specialization: {
+      specialization: {
         type: String,
       },
-      CollegeName: {
+      collegeName: {
         type: String,
       },
-      PassingYear: {
+      passingYear: {
         type: String,
       },
     },
   ],
-  SocialProfile: [
+  socialProfile: [
     {
-      Link: {
+      link: {
         type: String,
       },
-      Platform: {
+      platform: {
         type: String,
       },
     },
   ],
-  UploadResume: {
+  uploadResume: {
     type: String,
   },
 });

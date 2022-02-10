@@ -1,16 +1,16 @@
 const mongoose = require('mongoose');
 
 const Feedback = new mongoose.Schema({
-  FeedbackBy: {
+  feedbackBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'candidate_profile',
   },
-  Rating: {
+  rating: {
     enum: ['0', '1', '2', '3', '4', '5'],
     type: String,
     default: '0',
   },
-  Comment: {
+  comment: {
     type: String,
   },
 });

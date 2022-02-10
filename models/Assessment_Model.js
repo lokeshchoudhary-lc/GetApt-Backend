@@ -1,24 +1,24 @@
 const mongoose = require('mongoose');
 
 const AssessmentSchema = new mongoose.Schema({
-  Title: {
+  title: {
     type: String,
   },
-  Description: {
+  description: {
     type: String,
   },
-  ForRole: {
+  forRole: {
     type: String,
   },
-  Type: {
+  type: {
     type: String,
     enum: ['', '1', '2', '3'],
     default: '',
   },
-  FromComapny: { type: mongoose.Schema.Types.ObjectId },
-  CreatedBy: {
-    CreatedById: { type: mongoose.Schema.Types.ObjectId },
-    Name: { type: String },
+  fromComapny: { type: mongoose.Schema.Types.ObjectId },
+  createdBy: {
+    createdById: { type: mongoose.Schema.Types.ObjectId },
+    name: { type: String },
   },
 });
 

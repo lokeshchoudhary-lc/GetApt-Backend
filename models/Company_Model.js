@@ -1,22 +1,22 @@
 const mongoose = require('mongoose');
 
 const Company = new mongoose.Schema({
-  Name: {
+  name: {
     type: String,
   },
-  Website: {
+  website: {
     type: String,
   },
-  Logo: {
+  logo: {
     type: String,
   },
-  NumberOfEmployees: {
+  numberOfEmployees: {
     type: String,
   },
-  Country: {
+  country: {
     type: String,
   },
-  City: {
+  city: {
     type: String,
   },
 });

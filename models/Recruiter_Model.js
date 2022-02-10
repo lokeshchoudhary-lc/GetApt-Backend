@@ -2,30 +2,30 @@ const mongoose = require('mongoose');
 
 const Recruiter = new mongoose.Schema({
   FromComapny: { type: mongoose.Schema.Types.ObjectId },
-  Name: {
+  name: {
     type: String,
   },
-  Email: {
+  email: {
     type: String,
   },
-  Password: {
+  password: {
     type: String,
   },
-  Contact: {
+  contact: {
     type: String,
   },
-  Designation: {
+  designation: {
     type: String,
   },
-  Role: {
+  role: {
     type: String,
-    enum: ['Admin', 'Manager', 'Member'],
-    default: 'Admin',
+    enum: ['', 'admin', 'manager', 'member'],
+    default: '',
   },
-  Country: {
+  country: {
     type: String,
   },
-  City: {
+  city: {
     type: String,
   },
 });

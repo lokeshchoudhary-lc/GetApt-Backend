@@ -1,24 +1,24 @@
 const mongoose = require('mongoose');
 
 const AssessmentTypeBSchema = new mongoose.Schema({
-  AssessmentId: {
+  assessmentId: {
     type: mongoose.Schema.Types.ObjectId,
   },
-  StartAt: {
+  startAt: {
     type: String,
   },
-  EndAt: {
+  endAt: {
     type: String,
   },
-  Question: [
+  question: [
     {
-      ProblemStatement: {
+      problemStatement: {
         type: String,
       },
-      ScoreOfQuestion: {
+      scoreOfQuestion: {
         type: String,
       },
-      Attachment: {
+      attachment: {
         type: String,
       },
     },
