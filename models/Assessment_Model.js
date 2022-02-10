@@ -15,7 +15,7 @@ const AssessmentSchema = new mongoose.Schema({
     enum: ['', '1', '2', '3'],
     default: '',
   },
-  fromComapny: { type: mongoose.Schema.Types.ObjectId },
+  fromCompany: { type: mongoose.Schema.Types.ObjectId },
   createdBy: {
     createdById: { type: mongoose.Schema.Types.ObjectId },
     name: { type: String },

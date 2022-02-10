@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const Recruiter = new mongoose.Schema({
-  FromComapny: { type: mongoose.Schema.Types.ObjectId },
+  fromCompany: { type: mongoose.Schema.Types.ObjectId },
   name: {
     type: String,
   },
