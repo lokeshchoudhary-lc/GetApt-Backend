@@ -19,8 +19,8 @@ const Recruiter = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['', 'admin', 'manager', 'member'],
-    default: '',
+    enum: ['indi', 'admin', 'manager', 'member'],
+    default: 'indi',
   },
   country: {
     type: String,
@@ -28,6 +28,9 @@ const Recruiter = new mongoose.Schema({
   city: {
     type: String,
   },
+  // usedGoogleAuth: {
+  //   type: Boolean,
+  // },
 });
 
 module.exports = mongoose.model('recruiter', Recruiter);

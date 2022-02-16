@@ -8,9 +8,9 @@ module.exports = {
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-      const recruiterCheck = await Recruiter.findOne({ email: req.body.email })
-        .lean()
-        .exec();
+      const recruiterCheck = await Recruiter.findOne({
+        email: req.body.email,
+      }).exec();
 
       if (!recruiterCheck) {
         if (req.body.company) {
@@ -20,23 +20,32 @@ module.exports = {
             req.body.company.constructor === Object
           ) {
             req.body.password = hashedPassword;
+            req.body.role = 'indi';
             const recruiter = new Recruiter(req.body);
             await recruiter.save();
-            res.status(200).json({ message: 'Recruiter Successfully Created' });
+            res
+              .status(200)
+              .json({ message: 'Recruiter Account Successfully Created' });
           } else {
             const company = new Company(req.body.company);
             company.save();
             req.body.password = hashedPassword;
             req.body.fromCompany = company.id;
+            req.body.role = 'admin';
             const recruiter = new Recruiter(req.body);
             recruiter.save();
-            res.status(200).json({ message: 'Recruiter Successfully Created' });
+            res
+              .status(200)
+              .json({ message: 'Recruiter Account Successfully Created' });
           }
         } else {
           req.body.password = hashedPassword;
+          req.body.role = 'indi';
           const recruiter = new Recruiter(req.body);
           await recruiter.save();
-          res.status(200).json({ message: 'Recruiter Successfully Created' });
+          res
+            .status(200)
+            .json({ message: 'Recruiter Account Successfully Created' });
         }
       } else {
         throw createError.Conflict('Email Already Registered !');

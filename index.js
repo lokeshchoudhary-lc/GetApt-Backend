@@ -16,19 +16,18 @@ app.use(cookieParser());
 helmetConfig.config(app);
 app.use(cors(corsOptions));
 
-app.get('/hello', (req, res) => {
+app.get('/hello', (_req, res) => {
   res.send('Hello World!');
 });
 
-const login = require('./routes/Auth_Routes/login.js');
-const logout = require('./routes/Auth_Routes/logout.js');
-const signup = require('./routes/Auth_Routes/signup.js');
+const { authVerification } = require('./utils/jwt_helper');
+const AuthHandler = require('./routes/Auth_Routes/index');
+const DashboardHandler = require('./routes/Dashboard_Routes/index');
 
-app.use('/api/v1/login', login);
-app.use('/api/v1/signup', signup);
-app.use('/api/v1/logout', logout);
+app.use('/api/v1/auth', AuthHandler);
+app.use('/api/v1/dashboard', authVerification, DashboardHandler);
 
-app.use(async (req, res, next) => {
+app.use(async (_req, _res, next) => {
   const Error = createError.NotFound();
   next(Error);
 });
