@@ -28,9 +28,9 @@ const Recruiter = new mongoose.Schema({
   city: {
     type: String,
   },
-  // usedGoogleAuth: {
-  //   type: Boolean,
-  // },
+  usedGoogleAuth: {
+    type: Boolean,
+  },
 });
 
 module.exports = mongoose.model('recruiter', Recruiter);

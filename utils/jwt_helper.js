@@ -135,10 +135,44 @@ const verifyInviteLink = (link) => {
   });
 };
 
+const resetLinkGenerator = (key) => {
+  return new Promise((reslove, reject) => {
+    const options = {
+      expiresIn: '24h',
+      issuer: 'GetApt',
+    };
+    const secret = process.env.FORGOT_PASSWORD_SECRET + key;
+
+    jwt.sign({}, secret, options, (err, token) => {
+      if (err) {
+        reject(createError.InternalServerError());
+      }
+      reslove(token);
+    });
+  });
+};
+
+const verifyResetLink = (link, key) => {
+  return new Promise((reslove, reject) => {
+    jwt.verify(
+      link,
+      process.env.FORGOT_PASSWORD_SECRET + key,
+      (err, payload) => {
+        if (err) {
+          return reject(createError.Unauthorized());
+        }
+        reslove(payload);
+      }
+    );
+  });
+};
+
 module.exports = {
   signAccessToken,
   signRefreshToken,
   authVerification,
   inviteLinkGenerator,
   verifyInviteLink,
+  resetLinkGenerator,
+  verifyResetLink,
 };

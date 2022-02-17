@@ -1,4 +1,6 @@
 const Recruiter = require('../../../models/Recruiter_Model');
+const bcrypt = require('bcrypt');
+
 module.exports = {
   getMyProfile: async (req, res, next) => {
     try {
@@ -19,14 +21,20 @@ module.exports = {
         return res.status(400).send('Body Not Provided');
       }
       const { name, contact, designation } = req.body;
-      const recruiter = await Recruiter.findByIdAndUpdate(
-        user_id,
-        { name: name, contact: contact, designation: designation },
-        {
-          returnDocument: 'after',
-          lean: true,
-        }
-      )
+      const data = {};
+
+      data.name = name;
+      data.contact = contact;
+      data.designation = designation;
+
+      if (req.body.newPassword) {
+        const hashedPassword = bcrypt.hash(req.body.newPassword, 10);
+        data.password = hashedPassword;
+      }
+      const recruiter = await Recruiter.findByIdAndUpdate(user_id, data, {
+        returnDocument: 'after',
+        lean: true,
+      })
         .select({ name: 1, contact: 1, designation: 1 })
         .exec();
       res.json({ message: 'Profile Updated Successfully', data: recruiter });
