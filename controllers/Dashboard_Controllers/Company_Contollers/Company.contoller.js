@@ -12,7 +12,8 @@ module.exports = {
   },
   updateCompanyProfile: async (req, res, next) => {
     try {
-      const company = await Company.findByIdAndUpdate(id, req.body, {
+      const companyId = req.payload.companyId;
+      const company = await Company.findByIdAndUpdate(companyId, req.body, {
         returnDocument: 'after',
         lean: true,
       }).exec();

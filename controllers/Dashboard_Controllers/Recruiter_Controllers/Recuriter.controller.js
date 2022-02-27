@@ -6,7 +6,7 @@ module.exports = {
     try {
       const user_id = req.payload.user_id;
       const recruiter = await Recruiter.findById(user_id)
-        .select({ name: 1, contact: 1, designation: 1 })
+        .select({ name: 1, email: 1, contact: 1, designation: 1, role: 1 })
         .lean()
         .exec();
       res.send(recruiter);
@@ -50,7 +50,7 @@ module.exports = {
       }
       const companyId = req.payload.companyId;
 
-      const recruiter = await Recruiter.find({
+      const recruiter = await Recruiter.findOne({
         _id: id,
         fromCompany: companyId,
       })

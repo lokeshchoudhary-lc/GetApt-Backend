@@ -21,7 +21,7 @@ module.exports = {
       if (!recruiterCheck) {
         return res.status(404).send('Email Not Registered ');
       }
-      const { _id, password: hashedPassword, role, name } = recruiterCheck;
+      const { _id, password: hashedPassword, name } = recruiterCheck;
 
       const isMatch = await bcrypt.compare(req.body.password, hashedPassword);
 
@@ -29,13 +29,11 @@ module.exports = {
         return res.status(401).send('Invalid Email & Password!');
       }
       const payload = {};
-      if (recruiterCheck.fromCompany === undefined) {
+      if (recruiterCheck.fromCompany == undefined) {
         payload.user_id = _id;
-        payload.role = role;
         payload.name = name;
       } else {
         payload.user_id = _id;
-        payload.role = role;
         payload.name = name;
         payload.companyId = recruiterCheck.fromCompany;
       }

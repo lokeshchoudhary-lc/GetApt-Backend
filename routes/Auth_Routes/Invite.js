@@ -7,6 +7,6 @@ const {
 } = require('../../controllers/Auth_Controllers/Invite.controller');
 
 Route.post('/create', canAccess(['admin', 'manager']), createInvite);
-Route.post('/', useInvite);
+Route.post('/:InviteLink', useInvite);
 
 module.exports = Route;

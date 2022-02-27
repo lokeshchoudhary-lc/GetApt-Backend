@@ -28,11 +28,6 @@ module.exports = {
     try {
       const { identifier, link } = req.params;
       const password = req.body.password;
-      if (!identifier && !link) {
-        return res
-          .status(400)
-          .send('Identifier or link parameter not provided');
-      }
       if (!password) {
         return res.status(400).send('Password not provided');
       }

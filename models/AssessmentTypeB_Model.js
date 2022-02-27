@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 
 const AssessmentTypeBSchema = new mongoose.Schema({
-  assessmentId: {
-    type: mongoose.Schema.Types.ObjectId,
-  },
   startAt: {
     type: String,
   },
@@ -16,9 +13,6 @@ const AssessmentTypeBSchema = new mongoose.Schema({
         type: String,
       },
       scoreOfQuestion: {
-        type: String,
-      },
-      attachment: {
         type: String,
       },
     },

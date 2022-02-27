@@ -11,33 +11,42 @@ module.exports = {
       if (!req.body.email && !req.body.role) {
         return res.status(400).send('Email or Role not provided');
       }
-      const payload = {
+      const recruiter = await Recruiter.findOne({
         email: req.body.email,
-        role: req.body.role,
-        companyId: req.payload.companyId,
-      };
-      if (req.payload.role === 'manager' && req.body.role === 'admin') {
-        return res.status(401).send('Action not allowed for the account');
+      }).exec();
+
+      if (!recruiter) {
+        const payload = {
+          email: req.body.email,
+          role: req.body.role,
+          companyId: req.payload.companyId,
+        };
+        if (req.payload.role === 'manager' && req.body.role === 'admin') {
+          return res.status(401).send('Action not allowed for the account');
+        }
+        const link = await inviteLinkGenerator(payload);
+        res.status(200).json({ link: link });
+      } else {
+        res.status(400).send('Recruiter Already Exists');
       }
-      const link = await inviteLinkGenerator(payload);
-      res.status(200).json({ link: link });
     } catch (err) {
       return next(err);
     }
   },
   useInvite: async (req, res, next) => {
     try {
-      const { InviteLink } = req.query;
-      if (!InviteLink) {
-        return res.status(400).send('InviteLink not provided');
-      }
+      const InviteLink = req.params.InviteLink;
       if (!req.body) {
         return res.status(400).send('Body Not Provided');
       }
       const linkPayload = await verifyInviteLink(InviteLink);
       const { email, role, companyId } = linkPayload;
-      const recruiter = await Recruiter.find({ email: email }).exec();
-      if (!recruiter) {
+
+      const recruiterCheck = await Recruiter.findOne({
+        email: email,
+      }).exec();
+
+      if (!recruiterCheck) {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
         req.body.email = email;
@@ -51,7 +60,7 @@ module.exports = {
           .status(200)
           .json({ message: 'Recruiter Account Successfully Created' });
       } else {
-        res.status(400).send('Action not allowed for the account');
+        res.status(400).send('Link Expired');
       }
     } catch (err) {
       return next(err);

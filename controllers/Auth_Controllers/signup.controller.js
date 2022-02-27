@@ -1,4 +1,3 @@
-const createError = require('http-errors');
 const bcrypt = require('bcrypt');
 const Recruiter = require('../../models/Recruiter_Model');
 const Company = require('../../models/Company_Model');
@@ -48,7 +47,7 @@ module.exports = {
             .json({ message: 'Recruiter Account Successfully Created' });
         }
       } else {
-        throw createError.Conflict('Email Already Registered !');
+        return res.status(409).send('Email Already Registered !');
       }
     } catch (error) {
       return next(error);

@@ -81,10 +81,9 @@ const authVerification = async (req, res, next) => {
       const payload = await verifyRefreshToken(refreshTokenCookie);
       const newPayload = {};
       newPayload.user_id = payload.user_id;
-      newPayload.role = payload.user_id;
       newPayload.name = payload.name;
-      if (payload.company_id !== undefined) {
-        newPayload.companyId = payload.company_id;
+      if (payload.companyId != undefined) {
+        newPayload.companyId = payload.companyId;
       }
       const newAccessToken = await signAccessToken(newPayload);
 

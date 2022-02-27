@@ -20,6 +20,8 @@ const AssessmentSchema = new mongoose.Schema({
     createdById: { type: mongoose.Schema.Types.ObjectId },
     name: { type: String },
   },
+  assessmentTypeA_Id: { type: mongoose.Schema.Types.ObjectId },
+  assessmentTypeB_Id: { type: mongoose.Schema.Types.ObjectId },
 });
 
 module.exports = mongoose.model('assessment', AssessmentSchema);

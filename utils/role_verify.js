@@ -1,11 +1,12 @@
-const createError = require('http-errors');
+const Recruiter = require('../models/Recruiter_Model');
 
 module.exports = {
   canAccess: (accessRole) => {
-    return (req, res, next) => {
+    return async (req, res, next) => {
       try {
-        const { role } = req.payload;
-
+        const user_id = req.payload.user_id;
+        const recruiter = await Recruiter.findById(user_id);
+        const role = recruiter.role;
         if (accessRole.includes(role)) {
           return next();
         } else {

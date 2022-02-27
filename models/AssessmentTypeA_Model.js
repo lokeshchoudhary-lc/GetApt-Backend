@@ -20,9 +20,6 @@ const Subjective = new mongoose.Schema(
     question: {
       type: String,
     },
-    answer: {
-      type: String,
-    },
     scoreOfQuestion: {
       type: String,
     },
@@ -32,11 +29,19 @@ const Subjective = new mongoose.Schema(
 
 const Matchups = new mongoose.Schema(
   {
+    question: {
+      type: String,
+    },
     columnA: [String],
     columnB: [String],
     answer: [String],
     scoreOfQuestion: {
-      type: String,
+      correctMarking: {
+        type: String,
+      },
+      wrongMarking: {
+        type: String,
+      },
     },
   },
   { _id: false }
@@ -47,21 +52,15 @@ const MultipleAnswer = new mongoose.Schema(
     question: {
       type: String,
     },
-    optionA: {
-      type: String,
-    },
-    optionB: {
-      type: String,
-    },
-    optionC: {
-      type: String,
-    },
-    optionD: {
-      type: String,
-    },
+    options: [String],
     answer: [String],
     scoreOfQuestion: {
-      type: String,
+      correctMarking: {
+        type: String,
+      },
+      wrongMarking: {
+        type: String,
+      },
     },
   },
   { _id: false }
@@ -72,32 +71,39 @@ const MCQ = new mongoose.Schema(
     question: {
       type: String,
     },
-    optionA: {
-      type: String,
-    },
-    optionB: {
-      type: String,
-    },
-    optionC: {
-      type: String,
-    },
-    optionD: {
-      type: String,
-    },
+    options: [String],
     answer: {
       type: String,
     },
     scoreOfQuestion: {
+      correctMarking: {
+        type: String,
+      },
+      wrongMarking: {
+        type: String,
+      },
+    },
+  },
+  { _id: false }
+);
+
+const Passage = new mongoose.Schema(
+  {
+    problemStatement: {
       type: String,
+    },
+    question: {
+      mcq: [MCQ],
+      multipleAnswer: [MultipleAnswer],
+      matchups: [Matchups],
+      subjective: [Subjective],
+      integerType: [IntegerType],
     },
   },
   { _id: false }
 );
 
 const AssessmentTypeASchema = new mongoose.Schema({
-  assessmentId: {
-    type: mongoose.Schema.Types.ObjectId,
-  },
   duration: {
     type: String,
   },
@@ -110,16 +116,9 @@ const AssessmentTypeASchema = new mongoose.Schema({
   mcq: [MCQ],
   multipleAnswer: [MultipleAnswer],
   matchups: [Matchups],
-  mubjective: [Subjective],
+  subjective: [Subjective],
   integerType: [IntegerType],
-  passage: [
-    {
-      MCQ,
-      IntegerType,
-      MultipleAnswer,
-      Subjective,
-      Matchups,
-    },
-  ],
+  passage: [Passage],
 });
+
 module.exports = mongoose.model('assessment_type_a', AssessmentTypeASchema);
