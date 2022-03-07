@@ -8,6 +8,9 @@ const {
 module.exports = {
   createInvite: async (req, res, next) => {
     try {
+      if (!req.payload.companyId) {
+        return res.status(409).send('Action Not Allowed');
+      }
       if (!req.body.email && !req.body.role) {
         return res.status(400).send('Email or Role not provided');
       }

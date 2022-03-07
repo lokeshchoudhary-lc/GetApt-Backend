@@ -19,7 +19,6 @@ module.exports = {
             req.body.company.constructor === Object
           ) {
             req.body.password = hashedPassword;
-            req.body.role = 'indi';
             const recruiter = new Recruiter(req.body);
             await recruiter.save();
             res
@@ -30,7 +29,6 @@ module.exports = {
             company.save();
             req.body.password = hashedPassword;
             req.body.fromCompany = company.id;
-            req.body.role = 'admin';
             const recruiter = new Recruiter(req.body);
             recruiter.save();
             res
@@ -39,7 +37,6 @@ module.exports = {
           }
         } else {
           req.body.password = hashedPassword;
-          req.body.role = 'indi';
           const recruiter = new Recruiter(req.body);
           await recruiter.save();
           res

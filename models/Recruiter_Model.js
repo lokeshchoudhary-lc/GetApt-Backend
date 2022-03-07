@@ -19,8 +19,8 @@ const Recruiter = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['indi', 'admin', 'manager', 'member'],
-    default: 'indi',
+    enum: ['admin', 'manager', 'member'],
+    default: 'admin',
   },
   country: {
     type: String,

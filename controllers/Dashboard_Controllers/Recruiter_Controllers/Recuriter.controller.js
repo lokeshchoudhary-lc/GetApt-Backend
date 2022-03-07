@@ -44,6 +44,9 @@ module.exports = {
   },
   getOthersProfile: async (req, res, next) => {
     try {
+      if (!req.payload.companyId) {
+        return res.status(409).send('Action Not Allowed');
+      }
       const id = req.params.id;
       if (!id) {
         return res.status(400).send('Parameter Not Provided');
@@ -64,6 +67,9 @@ module.exports = {
   },
   updateOthersProfileRole: async (req, res, next) => {
     try {
+      if (!req.payload.companyId) {
+        return res.status(409).send('Action Not Allowed');
+      }
       const id = req.params.id;
       if (!id) {
         return res.status(400).send('Parameter Not Provided');
@@ -104,6 +110,9 @@ module.exports = {
   },
   deleteOthersProfile: async (req, res, next) => {
     try {
+      if (!req.payload.companyId) {
+        return res.status(409).send('Action Not Allowed');
+      }
       const id = req.params.id;
       if (!id) {
         return res.status(400).send('Parameter Not Provided');

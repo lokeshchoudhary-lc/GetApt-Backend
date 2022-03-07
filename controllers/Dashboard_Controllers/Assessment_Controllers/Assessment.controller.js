@@ -6,6 +6,7 @@ module.exports = {
   getCompanyAssessment: async (req, res, next) => {
     try {
       const { companyId } = req.payload;
+
       const assessment = await Assessment.find({
         fromCompany: companyId,
       })
@@ -39,14 +40,82 @@ module.exports = {
     }
   },
   shareAssessmentInCompany: async (req, res, next) => {
-    //
+    try {
+      if (!companyId) {
+        return res.status(409).send('Action Not Allowed');
+      }
+      const { assessmentId, sendTo } = req.body;
+      //Aws email
+    } catch (err) {
+      return next(err);
+    }
+  },
+  mergeAssessment: async (req, res, next) => {
+    try {
+      const typeAid = req.query.typeAid;
+      const typeBid = req.query.typeBid;
+
+      if (
+        req.body.title == undefined &&
+        req.body.description == undefined &&
+        req.body.forRole == undefined
+      ) {
+        return res.status(400).send('Assessment details must be provided');
+      }
+
+      if (!typeAid && !typeBid) {
+        return res
+          .status(400)
+          .send('Assessment id of both types must be provided');
+      }
+
+      const { user_id, companyId, name } = req.payload;
+
+      if (!companyId) {
+        req.body.fromCompany = user_id;
+      } else {
+        req.body.fromCompany = companyId;
+      }
+
+      req.body.type = '3';
+      req.body.createdById = { createdByIdId: user_id, name: name };
+
+      const oldAssessmentTypeA = await AssessmentTypeA.findById(typeAid)
+        .lean()
+        .exec();
+      delete oldAssessmentTypeA._id;
+      delete oldAssessmentTypeA.startAt;
+      delete oldAssessmentTypeA.endAt;
+      const newAssessmentTypeA = new AssessmentTypeA(oldAssessmentTypeA);
+      req.body.assessmentTypeA_Id = newAssessmentTypeA.id;
+
+      const oldAssessmentTypeB = await AssessmentTypeB.findById(typeBid)
+        .lean()
+        .exec();
+      delete oldAssessmentTypeB._id;
+      delete oldAssessmentTypeB.startAt;
+      delete oldAssessmentTypeB.endAt;
+      const newAssessmentTypeB = new AssessmentTypeB(oldAssessmentTypeB);
+      req.body.assessmentTypeB_Id = newAssessmentTypeB.id;
+
+      new Assessment(req.body);
+
+      res.status(200).json({ message: 'Assessment Successfully Created' });
+    } catch (err) {
+      return next(err);
+    }
   },
   useTemplate: async (req, res, next) => {
     try {
       const id = req.params.id;
       const { user_id, companyId, name } = req.payload;
 
-      req.body.fromCompany = companyId;
+      if (!companyId) {
+        req.body.fromCompany = user_id;
+      } else {
+        req.body.fromCompany = companyId;
+      }
+
       req.body.createdBy = { createdById: user_id, name: name };
 
       const assessment = await Assessment.findById(id);
@@ -60,6 +129,8 @@ module.exports = {
             .lean()
             .exec();
           delete oldAssessmentTypeB._id;
+          delete oldAssessmentTypeB.startAt;
+          delete oldAssessmentTypeB.endAt;
           const newAssessmentTypeB = new AssessmentTypeB(oldAssessmentTypeB);
           req.body.assessmentTypeB_Id = newAssessmentTypeB.id;
 
@@ -76,6 +147,8 @@ module.exports = {
             .lean()
             .exec();
           delete oldAssessmentTypeA._id;
+          delete oldAssessmentTypeA.startAt;
+          delete oldAssessmentTypeA.endAt;
           const newAssessmentTypeA = new AssessmentTypeA(oldAssessmentTypeA);
           req.body.assessmentTypeA_Id = newAssessmentTypeA.id;
 
@@ -95,6 +168,8 @@ module.exports = {
             .lean()
             .exec();
           delete oldAssessmentTypeA._id;
+          delete oldAssessmentTypeA.startAt;
+          delete oldAssessmentTypeA.endAt;
           const newAssessmentTypeA = new AssessmentTypeA(oldAssessmentTypeA);
           req.body.assessmentTypeA_Id = newAssessmentTypeA.id;
 
@@ -104,6 +179,8 @@ module.exports = {
             .lean()
             .exec();
           delete oldAssessmentTypeB._id;
+          delete oldAssessmentTypeB.startAt;
+          delete oldAssessmentTypeB.endAt;
           const newAssessmentTypeB = new AssessmentTypeB(oldAssessmentTypeB);
           req.body.assessmentTypeB_Id = newAssessmentTypeB.id;
 
@@ -138,6 +215,8 @@ module.exports = {
           .lean()
           .exec();
         delete oldAssessmentTypeA._id;
+        delete oldAssessmentTypeA.startAt;
+        delete oldAssessmentTypeA.endAt;
         const newAssessmentTypeA = new AssessmentTypeA(oldAssessmentTypeA);
         req.body.assessmentTypeA_Id = newAssessmentTypeA.id;
 
@@ -153,6 +232,8 @@ module.exports = {
           .lean()
           .exec();
         delete oldAssessmentTypeB._id;
+        delete oldAssessmentTypeB.startAt;
+        delete oldAssessmentTypeB.endAt;
         const newAssessmentTypeB = new AssessmentTypeB(oldAssessmentTypeB);
         req.body.assessmentTypeB_Id = newAssessmentTypeB.id;
 
@@ -168,7 +249,13 @@ module.exports = {
   createAssessment: async (req, res, next) => {
     try {
       const { user_id, companyId, name } = req.payload;
-      req.body.fromCompany = companyId;
+
+      if (!companyId) {
+        req.body.fromCompany = user_id;
+      } else {
+        req.body.fromCompany = companyId;
+      }
+
       req.body.createdBy = { createdById: user_id, name: name };
       if (req.body.type == '') {
         return res.status(400).send('Type of Assessment is required!');

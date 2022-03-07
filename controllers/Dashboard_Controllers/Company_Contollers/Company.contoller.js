@@ -4,6 +4,9 @@ module.exports = {
   getCompanyProfile: async (req, res, next) => {
     try {
       const companyId = req.payload.companyId;
+      if (!companyId) {
+        return res.status(409).send('Action Not Allowed');
+      }
       const company = await Company.findById(companyId).lean().exec();
       res.send(company);
     } catch (err) {
@@ -13,6 +16,9 @@ module.exports = {
   updateCompanyProfile: async (req, res, next) => {
     try {
       const companyId = req.payload.companyId;
+      if (!companyId) {
+        return res.status(409).send('Action Not Allowed');
+      }
       const company = await Company.findByIdAndUpdate(companyId, req.body, {
         returnDocument: 'after',
         lean: true,
@@ -28,8 +34,11 @@ module.exports = {
   getCompanyEmployees: async (req, res, next) => {
     try {
       const companyId = req.payload.companyId;
+      if (!companyId) {
+        return res.status(409).send('Action Not Allowed');
+      }
       const company = await Recruiter.find({ fromCompany: companyId })
-        .select({ name: 1, email: 1, role: 1, designation: 1 })
+        .select({ id: 1, name: 1, email: 1, role: 1, designation: 1 })
         .lean()
         .exec();
       res.send(company);
