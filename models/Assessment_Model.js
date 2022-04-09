@@ -7,6 +7,9 @@ const AssessmentSchema = new mongoose.Schema({
   description: {
     type: String,
   },
+  workExperience: {
+    type: String,
+  },
   forRole: {
     type: String,
   },

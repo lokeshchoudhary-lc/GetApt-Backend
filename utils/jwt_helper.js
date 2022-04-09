@@ -1,5 +1,11 @@
 const jwt = require('jsonwebtoken');
-const createError = require('http-errors');
+
+function Unauthorized(message = 'Unauthorized') {
+  const error = new Error();
+  error.message = message;
+  error.status = 401;
+  return error;
+}
 
 const signAccessToken = (payload) => {
   return new Promise((reslove, reject) => {
@@ -11,7 +17,7 @@ const signAccessToken = (payload) => {
 
     jwt.sign(payload, secret, options, (err, token) => {
       if (err) {
-        reject(createError.InternalServerError());
+        reject(new Error(err.message));
       }
       reslove(token);
     });
@@ -28,7 +34,7 @@ const signRefreshToken = (payload) => {
 
     jwt.sign(payload, secret, options, (err, token) => {
       if (err) {
-        reject(createError.InternalServerError());
+        reject(new Error(err.message));
       }
       reslove(token);
     });
@@ -38,16 +44,16 @@ const signRefreshToken = (payload) => {
 const verifyAccessToken = (cookie_info) => {
   return new Promise((resolve, reject) => {
     if (!cookie_info) {
-      return reject(createError.Unauthorized());
+      return reject(Unauthorized());
     }
 
     jwt.verify(cookie_info, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
       if (payload) {
         resolve(payload);
       } else if (err.name === 'JsonWebTokenError') {
-        return reject(createError.Unauthorized());
+        return reject(Unauthorized());
       } else {
-        return reject(createError.Unauthorized(err.message));
+        return reject(Unauthorized(err.message));
       }
     });
   });
@@ -56,12 +62,12 @@ const verifyAccessToken = (cookie_info) => {
 const verifyRefreshToken = (cookie) => {
   return new Promise((reslove, reject) => {
     if (!cookie) {
-      return reject(createError.Unauthorized());
+      return reject(Unauthorized());
     }
 
     jwt.verify(cookie, process.env.REFRESH_TOKEN_SECRET, (err, payload) => {
       if (err) {
-        return reject(createError.Unauthorized());
+        return reject(Unauthorized(err.message));
       }
       reslove(payload);
     });
@@ -75,7 +81,7 @@ const authVerification = async (req, res, next) => {
     if (!accessTokenCookie) {
       //
       if (!refreshTokenCookie) {
-        throw createError.Unauthorized();
+        throw Unauthorized();
       }
       //
       const payload = await verifyRefreshToken(refreshTokenCookie);
@@ -116,7 +122,7 @@ const inviteLinkGenerator = (payload) => {
 
     jwt.sign(payload, secret, options, (err, token) => {
       if (err) {
-        reject(createError.InternalServerError());
+        reject(new Error(err.message));
       }
       reslove(token);
     });
@@ -127,7 +133,7 @@ const verifyInviteLink = (link) => {
   return new Promise((reslove, reject) => {
     jwt.verify(link, process.env.GENERAL_TOKEN_SECRET, (err, payload) => {
       if (err) {
-        return reject(createError.Unauthorized());
+        return reject(Unauthorized(err.message));
       }
       reslove(payload);
     });
@@ -144,7 +150,7 @@ const resetLinkGenerator = (key) => {
 
     jwt.sign({}, secret, options, (err, token) => {
       if (err) {
-        reject(createError.InternalServerError());
+        reject(new Error(err.message));
       }
       reslove(token);
     });
@@ -158,7 +164,7 @@ const verifyResetLink = (link, key) => {
       process.env.FORGOT_PASSWORD_SECRET + key,
       (err, payload) => {
         if (err) {
-          return reject(createError.Unauthorized());
+          return reject(Unauthorized(err.message));
         }
         reslove(payload);
       }

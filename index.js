@@ -1,5 +1,4 @@
 const express = require('express');
-const createError = require('http-errors');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const corsOptions = require('./utils/corsConfig');
@@ -28,8 +27,10 @@ app.use('/api/v1/auth', AuthHandler);
 app.use('/api/v1/dashboard', authVerification, DashboardHandler);
 
 app.use(async (_req, _res, next) => {
-  const Error = createError.NotFound();
-  next(Error);
+  const Err = new Error();
+  Err.status = 404;
+  Err.message = 'Route not found';
+  next(Err);
 });
 
 app.use((err, _req, res, _next) => {

@@ -49,4 +49,6 @@ const Candidate = new mongoose.Schema({
   },
 });
 
+Candidate.index({ email: 1 });
+
 module.exports = mongoose.model('candidate', Candidate);

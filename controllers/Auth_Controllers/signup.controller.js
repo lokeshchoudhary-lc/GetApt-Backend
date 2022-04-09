@@ -50,4 +50,18 @@ module.exports = {
       return next(error);
     }
   },
+  emailCheck: async (req, res, next) => {
+    try {
+      const recruiterCheck = await Recruiter.findOne({
+        email: req.body.email,
+      }).exec();
+      if (!recruiterCheck) {
+        return res.status(200).json({ canSignUp: true });
+      } else {
+        return res.status(409).json({ canSignUp: false });
+      }
+    } catch (error) {
+      return next(error);
+    }
+  },
 };

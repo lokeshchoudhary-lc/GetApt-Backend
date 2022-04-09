@@ -17,6 +17,8 @@ const AssessmentTypeBSchema = new mongoose.Schema({
       },
     },
   ],
+  uploadedAttachment: [String],
+  urlAttachment: [String],
 });
 
 module.exports = mongoose.model('assessment_type_b', AssessmentTypeBSchema);
