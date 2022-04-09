@@ -1,10 +1,10 @@
 const Route = require('express').Router();
 const { authVerification } = require('../../utils/jwt_helper');
-const login = require('./Login');
-const logout = require('./Logout');
-const signup = require('./Signup');
-const invite = require('./Invite');
-const ForgotPassword = require('./ForgotPassword');
+const login = require('./login');
+const logout = require('./logout');
+const signup = require('./signup');
+const invite = require('./invite');
+const ForgotPassword = require('./forgotPassword');
 
 Route.use('/login', login);
 Route.use('/logout', logout);

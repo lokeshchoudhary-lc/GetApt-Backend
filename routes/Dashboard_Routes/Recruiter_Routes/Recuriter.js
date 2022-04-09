@@ -6,7 +6,7 @@ const {
   updateMyProfile,
   updateOthersProfileRole,
   deleteOthersProfile,
-} = require('../../../controllers/Dashboard_Controllers/Recruiter_Controllers/Recuriter.controller');
+} = require('../../../controllers/Dashboard_Controllers/Recruiter_Controllers/recuriter.controller');
 
 Route.get('/', getMyProfile);
 Route.get('/:id', getOthersProfile);

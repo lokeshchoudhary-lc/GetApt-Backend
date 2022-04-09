@@ -2,7 +2,7 @@ const Route = require('express').Router();
 
 const {
   logout,
-} = require('../../controllers/Auth_Controllers/Logout.controller');
+} = require('../../controllers/Auth_Controllers/logout.controller');
 
 Route.get('/', logout);
 
