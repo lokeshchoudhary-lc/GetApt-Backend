@@ -5,7 +5,7 @@ const {
   getCompanyProfile,
   getCompanyEmployees,
   updateCompanyProfile,
-} = require('../../../controllers/Dashboard_Controllers/Company_Contollers/Company.contoller');
+} = require('../../../controllers/Dashboard_Controllers/Company_Contollers/company.contoller');
 
 Route.get('/', canAccess(['admin']), getCompanyProfile);
 Route.get('/emps', getCompanyEmployees);

@@ -2,7 +2,7 @@ const Route = require('express').Router();
 
 const {
   login,
-} = require('../../controllers/Auth_Controllers/Login.controller');
+} = require('../../controllers/Auth_Controllers/login.controller');
 
 Route.post('/', login);
 

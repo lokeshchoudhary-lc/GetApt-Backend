@@ -10,7 +10,7 @@ const {
   updateAssessment,
   deleteAssessment,
   mergeAssessment,
-} = require('../../../controllers/Dashboard_Controllers/Assessment_Controllers/Assessment.controller');
+} = require('../../../controllers/Dashboard_Controllers/Assessment_Controllers/assessment.controller');
 
 Route.get('/my', getMyAssessment);
 Route.get('/company', getCompanyAssessment);
