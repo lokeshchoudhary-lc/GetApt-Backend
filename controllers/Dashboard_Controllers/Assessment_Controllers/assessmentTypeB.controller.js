@@ -1,4 +1,4 @@
-const AssessmentTypeB = require('../../../models/AssessmentTypeB_Model');
+const AssessmentTypeB = require('../../../models/Assessment_Model/AssessmentTypeB_Model');
 
 module.exports = {
   getMyAssessmentTypeB: async (req, res, next) => {

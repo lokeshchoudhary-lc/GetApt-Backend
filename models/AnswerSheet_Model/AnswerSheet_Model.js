@@ -6,6 +6,15 @@ const AnswerSheet = new mongoose.Schema({
     candidateId: { type: mongoose.Schema.Types.ObjectId },
     name: { type: String },
   },
+  totalComputedScore: {
+    type: String,
+  },
+  totalComputedScoreTypeA: {
+    type: String,
+  },
+  totalComputedScoreTypeB: {
+    type: String,
+  },
   answerTypeA: {
     type: mongoose.Schema.Types.ObjectId,
   },

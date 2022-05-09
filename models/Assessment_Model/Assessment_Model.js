@@ -18,13 +18,35 @@ const AssessmentSchema = new mongoose.Schema({
     enum: ['', '1', '2', '3'],
     default: '',
   },
+  disabled: { type: Boolean, default: false },
   fromCompany: { type: mongoose.Schema.Types.ObjectId },
   createdBy: {
     createdById: { type: mongoose.Schema.Types.ObjectId },
     name: { type: String },
   },
   assessmentTypeA_Id: { type: mongoose.Schema.Types.ObjectId },
+  assessmentTypeA_Data: {
+    duration: {
+      type: String,
+    },
+    startAt: {
+      type: String,
+    },
+    endAt: {
+      type: String,
+    },
+    maxScore: { type: String },
+  },
   assessmentTypeB_Id: { type: mongoose.Schema.Types.ObjectId },
+  assessmentTypeB_Data: {
+    startAt: {
+      type: String,
+    },
+    endAt: {
+      type: String,
+    },
+    maxScore: { type: String },
+  },
 });
 
 module.exports = mongoose.model('assessment', AssessmentSchema);

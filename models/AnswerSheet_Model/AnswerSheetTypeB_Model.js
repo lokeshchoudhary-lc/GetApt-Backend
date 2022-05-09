@@ -1,16 +1,10 @@
 const mongoose = require('mongoose');
 
 const AnswerSheetTypeBSchema = new mongoose.Schema({
-  startAt: {
-    type: String,
-  },
-  endAt: {
-    type: String,
-  },
-  question: [
+  answer: [
     {
       problemStatement: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
       },
       scoreOfQuestion: {
         type: String,
