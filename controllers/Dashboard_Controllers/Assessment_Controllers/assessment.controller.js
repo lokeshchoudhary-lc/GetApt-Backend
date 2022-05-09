@@ -1,6 +1,13 @@
-const Assessment = require('../../../models/Assessment_Model');
-const AssessmentTypeA = require('../../../models/AssessmentTypeA_Model');
-const AssessmentTypeB = require('../../../models/AssessmentTypeB_Model');
+const Assessment = require('../../../models/Assessment_Model/Assessment_Model');
+const AssessmentTypeA = require('../../../models/Assessment_Model/AssessmentTypeA_Model');
+const AssessmentTypeB = require('../../../models/Assessment_Model/AssessmentTypeB_Model');
+const IntegerTypeQuestion = require('../../../models/Questions_Model/IntergerType_Question_Model');
+const McqTypeQuestion = require('../../../models/Questions_Model/McqType_Question_Model');
+const MatchupTypeQuestion = require('../../../models/Questions_Model/MatchupType_Question_Model');
+const MultipleAnswerTypeQuestion = require('../../../models/Questions_Model/MultipleAnswerType_Question_Model');
+const PassageTypeQuestion = require('../../../models/Questions_Model/PassageType_Question_Model');
+const SubjectiveTypeQuestion = require('../../../models/Questions_Model/SubjectiveType_Question_Model');
+const UploadTypeQuestion = require('../../../models/Questions_Model/UploadType_Question_Model');
 
 module.exports = {
   getCompanyAssessment: async (req, res, next) => {
@@ -39,31 +46,155 @@ module.exports = {
       return next(err);
     }
   },
-  shareAssessmentInCompany: async (req, res, next) => {
-    try {
-      if (!companyId) {
-        return res.status(409).send('Action Not Allowed');
-      }
-      const { assessmentId, sendTo } = req.body;
-      //Aws email
-    } catch (err) {
-      return next(err);
-    }
-  },
+  // shareAssessmentInCompany: async (req, res, next) => {
+  //   try {
+  //     if (!companyId) {
+  //       return res.status(409).send('Action Not Allowed');
+  //     }
+  //     const { assessmentId, sendTo } = req.body;
+  //     Aws email
+  //   } catch (err) {
+  //     return next(err);
+  //   }
+  // },
   mergeAssessment: async (req, res, next) => {
+    const newQuestionTemplateA = async (id, newAssessmentId) => {
+      const oldMcqTypeQuestion = await McqTypeQuestion.find({
+        assessmentId: id,
+      })
+        .lean()
+        .exec();
+
+      if (oldMcqTypeQuestion) {
+        oldMcqTypeQuestion.forEach((element) => {
+          delete element.oldMcqTypeQuestion._id;
+          element.assessmentId = newAssessmentId;
+        });
+
+        const newMcqType = new McqTypeQuestion(oldMcqTypeQuestion);
+        await newMcqType.save();
+      }
+
+      const oldIntegerTypeQuestion = await IntegerTypeQuestion.find({
+        assessmentId: id,
+      })
+        .lean()
+        .exec();
+
+      if (oldIntegerTypeQuestion) {
+        oldIntegerTypeQuestion.forEach((element) => {
+          delete element.oldIntegerTypeQuestion._id;
+          element.assessmentId = newAssessmentId;
+        });
+
+        const newIntegerType = new IntegerTypeQuestion(oldIntegerTypeQuestion);
+        await newIntegerType.save();
+      }
+
+      const oldMatchupTypeQuestion = await MatchupTypeQuestion.find({
+        assessmentId: id,
+      })
+        .lean()
+        .exec();
+
+      if (oldMatchupTypeQuestion) {
+        oldMatchupTypeQuestion.forEach((element) => {
+          delete element.oldMatchupTypeQuestion._id;
+          element.assessmentId = newAssessmentId;
+        });
+
+        const newMatchupType = new MatchupTypeQuestion(oldMatchupTypeQuestion);
+        await newMatchupType.save();
+      }
+
+      const oldMultipleAnswerTypeQuestion =
+        await MultipleAnswerTypeQuestion.find({
+          assessmentId: id,
+        })
+          .lean()
+          .exec();
+
+      if (oldMultipleAnswerTypeQuestion) {
+        oldMultipleAnswerTypeQuestion.forEach((element) => {
+          delete element.oldMultipleAnswerTypeQuestion._id;
+          element.assessmentId = newAssessmentId;
+        });
+
+        const newMultipleAnswerType = new MultipleAnswerTypeQuestion(
+          oldMultipleAnswerTypeQuestion
+        );
+        await newMultipleAnswerType.save();
+      }
+
+      const oldPassageTypeQuestion = await PassageTypeQuestion.find({
+        assessmentId: id,
+      })
+        .lean()
+        .exec();
+
+      if (oldPassageTypeQuestion) {
+        oldPassageTypeQuestion.forEach((element) => {
+          delete element.oldPassageTypeQuestion._id;
+          element.assessmentId = newAssessmentId;
+        });
+
+        const newPassageTypeQuestion = new PassageTypeQuestion(
+          oldPassageTypeQuestion
+        );
+        await newPassageTypeQuestion.save();
+      }
+
+      const oldSubjectiveTypeQuestion = await SubjectiveTypeQuestion.find({
+        assessmentId: id,
+      })
+        .lean()
+        .exec();
+
+      if (oldSubjectiveTypeQuestion) {
+        oldSubjectiveTypeQuestion.forEach((element) => {
+          delete element.oldSubjectiveTypeQuestion._id;
+          element.assessmentId = newAssessmentId;
+        });
+
+        const newSubjectiveTypeQuestion = new SubjectiveTypeQuestion(
+          oldSubjectiveTypeQuestion
+        );
+        await newSubjectiveTypeQuestion.save();
+      }
+    };
+    const newQuestionTemplateB = async (id, newAssessmentId) => {
+      const oldUploadTypeQuestion = await UploadTypeQuestion.find({
+        assessmentId: id,
+      })
+        .lean()
+        .exec();
+
+      oldUploadTypeQuestion.forEach((element) => {
+        delete element.oldUploadTypeQuestion._id;
+        element.assessmentId = newAssessmentId;
+      });
+
+      const newUploadType = new UploadTypeQuestion(oldUploadTypeQuestion);
+      await newUploadType.save();
+    };
     try {
-      const typeAid = req.query.typeAid;
-      const typeBid = req.query.typeBid;
+      const firstId = req.query.firstId;
+      const secondId = req.query.secondId;
+
+      if (firstId == secondId) {
+        return res.status(400).send('Both Assessment id cannot be same');
+      }
 
       if (
         req.body.title == undefined &&
         req.body.description == undefined &&
-        req.body.forRole == undefined
+        req.body.forRole == undefined &&
+        req.body.workExperience == undefined
       ) {
         return res.status(400).send('Assessment details must be provided');
       }
 
-      if (!typeAid && !typeBid) {
+      if (!firstId && !secondId) {
         return res
           .status(400)
           .send('Assessment id of both types must be provided');
@@ -80,25 +211,64 @@ module.exports = {
       req.body.type = '3';
       req.body.createdById = { createdByIdId: user_id, name: name };
 
-      const oldAssessmentTypeA = await AssessmentTypeA.findById(typeAid)
+      const assessmentOne = await Assessment.findById(firstId);
+      const assessmentTwo = await Assessment.findById(secondId);
+      let typeA_Id = '';
+      let typeB_Id = '';
+      if (assessmentOne.type === '3') {
+        return res
+          .status(400)
+          .send('Assessment of both types cannot be merged together');
+      }
+      if (assessmentTwo.type === '3') {
+        return res
+          .status(400)
+          .send('Assessment of both types cannot be merged together');
+      }
+      if (assessmentOne.type === '1') {
+        typeA_Id = firstId;
+      } else {
+        typeB_Id = secondId;
+      }
+      if (assessmentTwo.type === '1') {
+        typeA_Id = firstId;
+      } else {
+        typeB_Id = secondId;
+      }
+
+      const oldAssessmentTypeA = await AssessmentTypeA.findById(typeA_Id)
         .lean()
         .exec();
       delete oldAssessmentTypeA._id;
-      delete oldAssessmentTypeA.startAt;
-      delete oldAssessmentTypeA.endAt;
       const newAssessmentTypeA = new AssessmentTypeA(oldAssessmentTypeA);
+
+      await newQuestionTemplateA(typeA_Id, newAssessmentTypeA.id);
+
       req.body.assessmentTypeA_Id = newAssessmentTypeA.id;
 
-      const oldAssessmentTypeB = await AssessmentTypeB.findById(typeBid)
+      req.body.assessmentTypeA_Data = {
+        duration: assessmentOne.assessmentTypeA_Data.duration,
+        maxScore: assessmentOne.assessmentTypeA_Data.maxScore,
+      };
+
+      const oldAssessmentTypeB = await AssessmentTypeB.findById(typeB_Id)
         .lean()
         .exec();
       delete oldAssessmentTypeB._id;
-      delete oldAssessmentTypeB.startAt;
-      delete oldAssessmentTypeB.endAt;
       const newAssessmentTypeB = new AssessmentTypeB(oldAssessmentTypeB);
+
+      await newQuestionTemplateB(typeB_Id, newAssessmentTypeB.id);
+
       req.body.assessmentTypeB_Id = newAssessmentTypeB.id;
 
-      new Assessment(req.body);
+      req.body.assessmentTypeB_Data = {
+        maxScore: assessmentTwo.assessmentTypeB_Data.maxScore,
+      };
+
+      const newAssessment = new Assessment(req.body);
+      await newAssessmentTypeA.save();
+      await newAssessmentTypeB.save();
+      await newAssessment.save();
 
       res.status(200).json({ message: 'Assessment Successfully Created' });
     } catch (err) {
@@ -106,6 +276,125 @@ module.exports = {
     }
   },
   useTemplate: async (req, res, next) => {
+    const newQuestionTemplateA = async (id, newAssessmentId) => {
+      const oldMcqTypeQuestion = await McqTypeQuestion.find({
+        assessmentId: id,
+      })
+        .lean()
+        .exec();
+
+      if (oldMcqTypeQuestion) {
+        oldMcqTypeQuestion.forEach((element) => {
+          delete element.oldMcqTypeQuestion._id;
+          element.assessmentId = newAssessmentId;
+        });
+
+        const newMcqType = new McqTypeQuestion(oldMcqTypeQuestion);
+        await newMcqType.save();
+      }
+
+      const oldIntegerTypeQuestion = await IntegerTypeQuestion.find({
+        assessmentId: id,
+      })
+        .lean()
+        .exec();
+
+      if (oldIntegerTypeQuestion) {
+        oldIntegerTypeQuestion.forEach((element) => {
+          delete element.oldIntegerTypeQuestion._id;
+          element.assessmentId = newAssessmentId;
+        });
+
+        const newIntegerType = new IntegerTypeQuestion(oldIntegerTypeQuestion);
+        await newIntegerType.save();
+      }
+
+      const oldMatchupTypeQuestion = await MatchupTypeQuestion.find({
+        assessmentId: id,
+      })
+        .lean()
+        .exec();
+
+      if (oldMatchupTypeQuestion) {
+        oldMatchupTypeQuestion.forEach((element) => {
+          delete element.oldMatchupTypeQuestion._id;
+          element.assessmentId = newAssessmentId;
+        });
+
+        const newMatchupType = new MatchupTypeQuestion(oldMatchupTypeQuestion);
+        await newMatchupType.save();
+      }
+
+      const oldMultipleAnswerTypeQuestion =
+        await MultipleAnswerTypeQuestion.find({
+          assessmentId: id,
+        })
+          .lean()
+          .exec();
+
+      if (oldMultipleAnswerTypeQuestion) {
+        oldMultipleAnswerTypeQuestion.forEach((element) => {
+          delete element.oldMultipleAnswerTypeQuestion._id;
+          element.assessmentId = newAssessmentId;
+        });
+
+        const newMultipleAnswerType = new MultipleAnswerTypeQuestion(
+          oldMultipleAnswerTypeQuestion
+        );
+        await newMultipleAnswerType.save();
+      }
+
+      const oldPassageTypeQuestion = await PassageTypeQuestion.find({
+        assessmentId: id,
+      })
+        .lean()
+        .exec();
+
+      if (oldPassageTypeQuestion) {
+        oldPassageTypeQuestion.forEach((element) => {
+          delete element.oldPassageTypeQuestion._id;
+          element.assessmentId = newAssessmentId;
+        });
+
+        const newPassageTypeQuestion = new PassageTypeQuestion(
+          oldPassageTypeQuestion
+        );
+        await newPassageTypeQuestion.save();
+      }
+
+      const oldSubjectiveTypeQuestion = await SubjectiveTypeQuestion.find({
+        assessmentId: id,
+      })
+        .lean()
+        .exec();
+
+      if (oldSubjectiveTypeQuestion) {
+        oldSubjectiveTypeQuestion.forEach((element) => {
+          delete element.oldSubjectiveTypeQuestion._id;
+          element.assessmentId = newAssessmentId;
+        });
+
+        const newSubjectiveTypeQuestion = new SubjectiveTypeQuestion(
+          oldSubjectiveTypeQuestion
+        );
+        await newSubjectiveTypeQuestion.save();
+      }
+    };
+    const newQuestionTemplateB = async (id, newAssessmentId) => {
+      const oldUploadTypeQuestion = await UploadTypeQuestion.find({
+        assessmentId: id,
+      })
+        .lean()
+        .exec();
+
+      oldUploadTypeQuestion.forEach((element) => {
+        delete element.oldUploadTypeQuestion._id;
+        element.assessmentId = newAssessmentId;
+      });
+
+      const newUploadType = new UploadTypeQuestion(oldUploadTypeQuestion);
+      await newUploadType.save();
+    };
     try {
       const id = req.params.id;
       const { user_id, companyId, name } = req.payload;
@@ -119,7 +408,12 @@ module.exports = {
       req.body.createdBy = { createdById: user_id, name: name };
 
       const assessment = await Assessment.findById(id);
-      const { assessmentTypeA_Id, assessmentTypeB_Id } = assessment;
+      const {
+        assessmentTypeA_Id,
+        assessmentTypeB_Id,
+        assessmentTypeB_Data,
+        assessmentTypeA_Data,
+      } = assessment;
 
       if (assessment.type == req.body.type) {
         if (assessmentTypeA_Id == undefined) {
@@ -129,10 +423,14 @@ module.exports = {
             .lean()
             .exec();
           delete oldAssessmentTypeB._id;
-          delete oldAssessmentTypeB.startAt;
-          delete oldAssessmentTypeB.endAt;
           const newAssessmentTypeB = new AssessmentTypeB(oldAssessmentTypeB);
+
+          await newQuestionTemplateB(assessmentTypeB_Id, newAssessmentTypeB.id);
+
           req.body.assessmentTypeB_Id = newAssessmentTypeB.id;
+          req.body.assessmentTypeB_Data = {
+            maxScore: assessmentTypeB_Data.maxScore,
+          };
 
           const newAssessment = new Assessment(req.body);
           await newAssessmentTypeB.save();
@@ -146,11 +444,17 @@ module.exports = {
           )
             .lean()
             .exec();
+
           delete oldAssessmentTypeA._id;
-          delete oldAssessmentTypeA.startAt;
-          delete oldAssessmentTypeA.endAt;
           const newAssessmentTypeA = new AssessmentTypeA(oldAssessmentTypeA);
+
+          await newQuestionTemplateA(assessmentTypeA_Id, newAssessmentTypeA.id);
+
           req.body.assessmentTypeA_Id = newAssessmentTypeA.id;
+          req.body.assessmentTypeA_Data = {
+            duration: assessmentTypeA_Data.duration,
+            maxScore: assessmentTypeA_Data.maxScore,
+          };
 
           const newAssessment = new Assessment(req.body);
           await newAssessmentTypeA.save();
@@ -167,11 +471,17 @@ module.exports = {
           )
             .lean()
             .exec();
+
           delete oldAssessmentTypeA._id;
-          delete oldAssessmentTypeA.startAt;
-          delete oldAssessmentTypeA.endAt;
           const newAssessmentTypeA = new AssessmentTypeA(oldAssessmentTypeA);
+
+          await newQuestionTemplateA(assessmentTypeA_Id, newAssessmentTypeA.id);
+
           req.body.assessmentTypeA_Id = newAssessmentTypeA.id;
+          req.body.assessmentTypeA_Data = {
+            duration: assessmentTypeA_Data.duration,
+            maxScore: assessmentTypeA_Data.maxScore,
+          };
 
           const oldAssessmentTypeB = await AssessmentTypeB.findById(
             assessmentTypeB_Id
@@ -179,10 +489,15 @@ module.exports = {
             .lean()
             .exec();
           delete oldAssessmentTypeB._id;
-          delete oldAssessmentTypeB.startAt;
-          delete oldAssessmentTypeB.endAt;
+
           const newAssessmentTypeB = new AssessmentTypeB(oldAssessmentTypeB);
+
+          await newQuestionTemplateB(assessmentTypeB_Id, newAssessmentTypeB.id);
+
           req.body.assessmentTypeB_Id = newAssessmentTypeB.id;
+          req.body.assessmentTypeB_Data = {
+            maxScore: assessmentTypeB_Data.maxScore,
+          };
 
           const newAssessment = new Assessment(req.body);
           await newAssessmentTypeA.save();
@@ -206,6 +521,7 @@ module.exports = {
         const assessment = new Assessment(req.body);
         await newAssessmentTypeA.save();
         await assessment.save();
+
         res.status(200).json({ message: 'Assessment Successfully Created' });
       }
       if (assessment.type == '3' && req.body.type == '1') {
@@ -214,11 +530,18 @@ module.exports = {
         )
           .lean()
           .exec();
+
         delete oldAssessmentTypeA._id;
-        delete oldAssessmentTypeA.startAt;
-        delete oldAssessmentTypeA.endAt;
+
         const newAssessmentTypeA = new AssessmentTypeA(oldAssessmentTypeA);
+
+        await newQuestionTemplateA(assessmentTypeA_Id, newAssessmentTypeA.id);
+
         req.body.assessmentTypeA_Id = newAssessmentTypeA.id;
+        req.body.assessmentTypeA_Data = {
+          duration: assessmentTypeA_Data.duration,
+          maxScore: assessmentTypeA_Data.maxScore,
+        };
 
         const newAssessment = new Assessment(req.body);
         await newAssessmentTypeA.save();
@@ -232,10 +555,14 @@ module.exports = {
           .lean()
           .exec();
         delete oldAssessmentTypeB._id;
-        delete oldAssessmentTypeB.startAt;
-        delete oldAssessmentTypeB.endAt;
+
         const newAssessmentTypeB = new AssessmentTypeB(oldAssessmentTypeB);
+        await newQuestionTemplateB(assessmentTypeB_Id, newAssessmentTypeB.id);
+
         req.body.assessmentTypeB_Id = newAssessmentTypeB.id;
+        req.body.assessmentTypeB_Data = {
+          maxScore: assessmentTypeB_Data.maxScore,
+        };
 
         const newAssessment = new Assessment(req.body);
         await newAssessmentTypeB.save();
@@ -293,7 +620,7 @@ module.exports = {
   updateAssessment: async (req, res, next) => {
     try {
       const id = req.params.id;
-      const { title, description, forRole, type } = req.body;
+      const { type, ...restBodyQuery } = req.body;
 
       const assessmentCheck = await Assessment.findById(id).lean().exec();
 
@@ -309,7 +636,7 @@ module.exports = {
           await AssessmentTypeA.deleteOne({
             _id: assessmentCheck.assessmentTypeA_Id,
           });
-          req.body.assessmentTypeA = undefined;
+          req.body.assessmentTypeA_Id = undefined;
 
           await Assessment.updateOne({ _id: id }, req.body).exec();
           res.status(200).json({
@@ -325,7 +652,7 @@ module.exports = {
           await AssessmentTypeB.deleteOne({
             _id: assessmentCheck.assessmentTypeB_Id,
           });
-          req.body.assessmentTypeB = undefined;
+          req.body.assessmentTypeB_Id = undefined;
 
           await Assessment.updateOne({ _id: id }, req.body).exec();
 
@@ -368,7 +695,7 @@ module.exports = {
           await AssessmentTypeB.deleteOne({
             _id: assessmentCheck.assessmentTypeB_Id,
           });
-          req.body.assessmentTypeB = undefined;
+          req.body.assessmentTypeB_Id = undefined;
 
           await Assessment.updateOne({ _id: id }, req.body).exec();
 
@@ -381,7 +708,7 @@ module.exports = {
           await AssessmentTypeA.deleteOne({
             _id: assessmentCheck.assessmentTypeA_Id,
           });
-          req.body.assessmentTypeA = undefined;
+          req.body.assessmentTypeA_Id = undefined;
 
           await Assessment.updateOne({ _id: id }, req.body).exec();
 
@@ -393,7 +720,7 @@ module.exports = {
       } else {
         const assessment = await Assessment.findByIdAndUpdate(
           id,
-          { title: title, description: description, forRole: forRole },
+          ...restBodyQuery,
           {
             returnDocument: 'after',
             lean: true,
@@ -408,16 +735,59 @@ module.exports = {
       return next(err);
     }
   },
+  disableAssessment: async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      await Assessment.findByIdAndUpdate(id, { disabled: true }).exec();
+      res.status(200).json({
+        message: 'Assessment Set to Disabled Successfully',
+      });
+    } catch (err) {
+      return next(err);
+    }
+  },
+  enableAssessment: async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      await Assessment.findByIdAndUpdate(id, { disabled: false }).exec();
+      res.status(200).json({
+        message: 'Assessment Set to Enabled Successfully',
+      });
+    } catch (err) {
+      return next(err);
+    }
+  },
   deleteAssessment: async (req, res, next) => {
     try {
       const id = req.params.id;
       const assessment = await Assessment.findById(id).exec();
       const { assessmentTypeA_Id, assessmentTypeB_Id } = assessment;
+
       if (assessmentTypeA_Id != undefined) {
-        await AssessmentTypeA.deleteOne({ _id: id }).exec();
+        await IntegerTypeQuestion.deleteMany({
+          assessmentId: assessmentTypeA_Id,
+        }).exec();
+        await McqTypeQuestion.deleteMany({
+          assessmentId: assessmentTypeA_Id,
+        }).exec();
+        await MatchupTypeQuestion.deleteMany({
+          assessmentId: assessmentTypeA_Id,
+        }).exec();
+        await SubjectiveTypeQuestion.deleteMany({
+          assessmentId: assessmentTypeA_Id,
+        }).exec();
+        await MultipleAnswerTypeQuestion.deleteMany({
+          assessmentId: assessmentTypeA_Id,
+        }).exec();
+        await PassageTypeQuestion.deleteMany({
+          assessmentId: assessmentTypeA_Id,
+        }).exec();
       }
+
       if (assessmentTypeB_Id != undefined) {
-        await AssessmentTypeB.deleteOne({ _id: id }).exec();
+        await UploadTypeQuestion.deleteMany({
+          assessmentId: assessmentTypeB_Id,
+        }).exec();
       }
       await Assessment.deleteOne({ _id: id }).exec();
       res.status(200).send('Assessment Deleted Successfully');
