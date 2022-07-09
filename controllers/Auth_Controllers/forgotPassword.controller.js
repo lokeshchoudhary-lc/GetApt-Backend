@@ -33,9 +33,12 @@ module.exports = {
       }
       verifyResetLink(link, identifier);
       const hashedPassword = bcrypt.hash(password, 10);
-      await Recruiter.findByIdAndUpdate(identifier, {
-        password: hashedPassword,
-      });
+      await Recruiter.updateOne(
+        { _id: identifier },
+        {
+          password: hashedPassword,
+        }
+      );
       res.send('Password Changed Successfully');
     } catch (err) {
       return next(err);

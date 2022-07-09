@@ -12,9 +12,11 @@ const McqTypeQuestionSchema = new mongoose.Schema({
   scoreOfQuestion: {
     correctMarking: {
       type: String,
+      default: '0',
     },
     wrongMarking: {
       type: String,
+      default: '0',
     },
   },
 });

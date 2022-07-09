@@ -10,10 +10,12 @@ const IntegerTypeQuestionSchema = new mongoose.Schema({
   },
   scoreOfQuestion: {
     correctMarking: {
-      type: String,
+      type: Number,
+      default: '0',
     },
     wrongMarking: {
-      type: String,
+      type: Number,
+      default: '0',
     },
   },
 });

@@ -22,12 +22,6 @@ const Recruiter = new mongoose.Schema({
     enum: ['admin', 'manager', 'member'],
     default: 'admin',
   },
-  country: {
-    type: String,
-  },
-  city: {
-    type: String,
-  },
   usedGoogleAuth: {
     type: Boolean,
   },

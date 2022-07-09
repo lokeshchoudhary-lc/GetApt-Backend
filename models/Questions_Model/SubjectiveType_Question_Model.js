@@ -6,7 +6,7 @@ const SubjectiveTypeQuestionSchema = new mongoose.Schema({
     type: String,
   },
   scoreOfQuestion: {
-    type: String,
+    type: Number,
   },
 });
 

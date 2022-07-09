@@ -1,11 +1,19 @@
 const mongoose = require('mongoose');
 
-const AssessmentTypeASchema = new mongoose.Schema({
-  instructions: { type: String },
+const AnswerSheetTypeASchema = new mongoose.Schema({
   sequenceNumber: [
     {
-      questionId: {
+      answerId: {
         type: mongoose.Schema.Types.ObjectId,
+      },
+      isFlagged: {
+        type: Boolean,
+      },
+      isAnswered: {
+        type: Boolean,
+      },
+      isAttempted: {
+        type: Boolean,
       },
       questionType: {
         type: String,
@@ -24,4 +32,4 @@ const AssessmentTypeASchema = new mongoose.Schema({
   ],
 });
 
-module.exports = mongoose.model('assessment_type_a', AssessmentTypeASchema);
+module.exports = mongoose.model('answersheet_type_a', AnswerSheetTypeASchema);

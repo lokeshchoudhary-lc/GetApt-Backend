@@ -21,6 +21,9 @@ module.exports = {
       if (!recruiterCheck) {
         return res.status(404).send('Email Not Registered ');
       }
+      if (recruiterCheck.usedGoogleAuth === true) {
+        return res.send('Please Use Google Login to continue');
+      }
       const { _id, password: hashedPassword, name } = recruiterCheck;
 
       const isMatch = await bcrypt.compare(req.body.password, hashedPassword);

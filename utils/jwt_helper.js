@@ -140,6 +140,33 @@ const verifyInviteLink = (link) => {
   });
 };
 
+const assessmentLinkGenerator = (payload) => {
+  return new Promise((reslove, reject) => {
+    const options = {
+      issuer: 'GetApt',
+    };
+    const secret = process.env.GENERAL_TOKEN_SECRET;
+
+    jwt.sign(payload, secret, options, (err, token) => {
+      if (err) {
+        reject(new Error(err.message));
+      }
+      reslove(token);
+    });
+  });
+};
+
+const verifyAssessmentLink = (link) => {
+  return new Promise((reslove, reject) => {
+    jwt.verify(link, process.env.GENERAL_TOKEN_SECRET, (err, payload) => {
+      if (err) {
+        return reject(Unauthorized(err.message));
+      }
+      reslove(payload);
+    });
+  });
+};
+
 const resetLinkGenerator = (key) => {
   return new Promise((reslove, reject) => {
     const options = {
@@ -177,7 +204,9 @@ module.exports = {
   signRefreshToken,
   authVerification,
   inviteLinkGenerator,
+  assessmentLinkGenerator,
   verifyInviteLink,
   resetLinkGenerator,
   verifyResetLink,
+  verifyAssessmentLink,
 };

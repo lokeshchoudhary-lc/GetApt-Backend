@@ -10,10 +10,12 @@ const MatchupTypeQuestionSchema = new mongoose.Schema({
   answerKey: [String],
   scoreOfQuestion: {
     correctMarking: {
-      type: String,
+      type: Number,
+      default: '0',
     },
     wrongMarking: {
-      type: String,
+      type: Number,
+      default: '0',
     },
   },
 });

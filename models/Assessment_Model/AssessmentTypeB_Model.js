@@ -6,6 +6,10 @@ const AssessmentTypeBSchema = new mongoose.Schema({
       questionId: {
         type: mongoose.Schema.Types.ObjectId,
       },
+      questionType: {
+        type: String,
+        default: 'upload',
+      },
     },
   ],
 });

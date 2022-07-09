@@ -6,11 +6,10 @@ const UploadTypeQuestionSchema = new mongoose.Schema({
     type: String,
   },
   scoreOfQuestion: {
-    type: String,
+    type: Number,
   },
 
   uploadedAttachment: [String],
-  urlAttachment: [String],
 });
 
 module.exports = mongoose.model(

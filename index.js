@@ -22,9 +22,11 @@ app.get('/hello', (_req, res) => {
 const { authVerification } = require('./utils/jwt_helper');
 const AuthHandler = require('./routes/Auth_Routes/index');
 const DashboardHandler = require('./routes/Dashboard_Routes/index');
+const CandidateHandler = require('./routes/Candidate_Routes/candidate');
 
 app.use('/api/v1/auth', AuthHandler);
 app.use('/api/v1/dashboard', authVerification, DashboardHandler);
+app.use('/api/v1/candidate', CandidateHandler);
 
 app.use(async (_req, _res, next) => {
   const Err = new Error();

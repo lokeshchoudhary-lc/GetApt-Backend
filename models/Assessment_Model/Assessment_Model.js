@@ -18,7 +18,8 @@ const AssessmentSchema = new mongoose.Schema({
     enum: ['', '1', '2', '3'],
     default: '',
   },
-  disabled: { type: Boolean, default: false },
+  disabled: { type: Boolean },
+  isDeleted: { type: Boolean, default: false },
   fromCompany: { type: mongoose.Schema.Types.ObjectId },
   createdBy: {
     createdById: { type: mongoose.Schema.Types.ObjectId },
@@ -36,6 +37,7 @@ const AssessmentSchema = new mongoose.Schema({
       type: String,
     },
     maxScore: { type: String },
+    numberOfQuestion: { type: String },
   },
   assessmentTypeB_Id: { type: mongoose.Schema.Types.ObjectId },
   assessmentTypeB_Data: {
@@ -46,6 +48,7 @@ const AssessmentSchema = new mongoose.Schema({
       type: String,
     },
     maxScore: { type: String },
+    numberOfQuestion: { type: String },
   },
 });
 

@@ -1,7 +1,9 @@
 const Assessment = require('../../../models/Assessment_Model/Assessment_Model');
+const Company = require('../../../models/Company_Model');
+const AnswerSheet = require('../../../models/AnswerSheet_Model/AnswerSheet_Model');
 const AssessmentTypeA = require('../../../models/Assessment_Model/AssessmentTypeA_Model');
 const AssessmentTypeB = require('../../../models/Assessment_Model/AssessmentTypeB_Model');
-const IntegerTypeQuestion = require('../../../models/Questions_Model/IntergerType_Question_Model');
+const IntegerTypeQuestion = require('../../../models/Questions_Model/IntegerType_Question_Model');
 const McqTypeQuestion = require('../../../models/Questions_Model/McqType_Question_Model');
 const MatchupTypeQuestion = require('../../../models/Questions_Model/MatchupType_Question_Model');
 const MultipleAnswerTypeQuestion = require('../../../models/Questions_Model/MultipleAnswerType_Question_Model');
@@ -13,10 +15,11 @@ module.exports = {
   getCompanyAssessment: async (req, res, next) => {
     try {
       const { companyId } = req.payload;
-
       const assessment = await Assessment.find({
         fromCompany: companyId,
+        isDeleted: false,
       })
+        .select({ isDeleted: 0 })
         .lean()
         .exec();
       res.status(200).send(assessment);
@@ -29,7 +32,9 @@ module.exports = {
       const { user_id } = req.payload;
       const assessment = await Assessment.find({
         'createdBy.createdById': user_id,
+        isDeleted: false,
       })
+        .select({ isDeleted: 0 })
         .lean()
         .exec();
       res.status(200).send(assessment);
@@ -40,7 +45,51 @@ module.exports = {
   getSingleAssessment: async (req, res, next) => {
     try {
       const id = req.params.id;
-      const assessment = await Assessment.findById(id).lean().exec();
+      const assessment = await Assessment.findById(id)
+        .select({ isDeleted: 0 })
+        .lean()
+        .exec();
+      res.status(200).send(assessment);
+    } catch (err) {
+      return next(err);
+    }
+  },
+  candidateResponse: async (req, res, next) => {
+    const id = req.params.id;
+    try {
+      const responses = await AnswerSheet.find({ fromAssessment: id }).select({
+        candidate: 1,
+      });
+      res.send(responses);
+    } catch (err) {
+      return next(err);
+    }
+  },
+  candidateResult: async (req, res, next) => {
+    const id = req.params.id;
+    try {
+      const responses = await AnswerSheet.find({ fromAssessment: id }).select({
+        candidate: 1,
+        totalComputedScore: 1,
+      });
+      res.send(responses);
+    } catch (err) {
+      return next(err);
+    }
+  },
+  preview: async (req, res, next) => {
+    try {
+      const companyId = req.payload.companyId;
+      const id = req.params.id;
+
+      const assessment = await Assessment.findById(id)
+        .select({ isDeleted: 0 })
+        .lean()
+        .exec();
+      const company = await Company.findById(companyId).lean().exec();
+      if (company) {
+        assessment.companyLogo = company.logo;
+      }
       res.status(200).send(assessment);
     } catch (err) {
       return next(err);
@@ -52,12 +101,13 @@ module.exports = {
   //       return res.status(409).send('Action Not Allowed');
   //     }
   //     const { assessmentId, sendTo } = req.body;
-  //     Aws email
+  //     send email
   //   } catch (err) {
   //     return next(err);
   //   }
   // },
   mergeAssessment: async (req, res, next) => {
+    //not yet a feature , it is extra
     const newQuestionTemplateA = async (id, newAssessmentId) => {
       const oldMcqTypeQuestion = await McqTypeQuestion.find({
         assessmentId: id,
@@ -249,6 +299,7 @@ module.exports = {
       req.body.assessmentTypeA_Data = {
         duration: assessmentOne.assessmentTypeA_Data.duration,
         maxScore: assessmentOne.assessmentTypeA_Data.maxScore,
+        numberOfQuestion: assessmentOne.assessmentTypeA_Data.numberOfQuestion,
       };
 
       const oldAssessmentTypeB = await AssessmentTypeB.findById(typeB_Id)
@@ -263,6 +314,7 @@ module.exports = {
 
       req.body.assessmentTypeB_Data = {
         maxScore: assessmentTwo.assessmentTypeB_Data.maxScore,
+        numberOfQuestion: assessmentTwo.assessmentTypeB_Data.numberOfQuestion,
       };
 
       const newAssessment = new Assessment(req.body);
@@ -430,6 +482,7 @@ module.exports = {
           req.body.assessmentTypeB_Id = newAssessmentTypeB.id;
           req.body.assessmentTypeB_Data = {
             maxScore: assessmentTypeB_Data.maxScore,
+            numberOfQuestion: assessmentTypeB_Data.numberOfQuestion,
           };
 
           const newAssessment = new Assessment(req.body);
@@ -454,6 +507,7 @@ module.exports = {
           req.body.assessmentTypeA_Data = {
             duration: assessmentTypeA_Data.duration,
             maxScore: assessmentTypeA_Data.maxScore,
+            numberOfQuestion: assessmentTypeA_Data.numberOfQuestion,
           };
 
           const newAssessment = new Assessment(req.body);
@@ -481,6 +535,7 @@ module.exports = {
           req.body.assessmentTypeA_Data = {
             duration: assessmentTypeA_Data.duration,
             maxScore: assessmentTypeA_Data.maxScore,
+            numberOfQuestion: assessmentTypeA_Data.numberOfQuestion,
           };
 
           const oldAssessmentTypeB = await AssessmentTypeB.findById(
@@ -497,6 +552,7 @@ module.exports = {
           req.body.assessmentTypeB_Id = newAssessmentTypeB.id;
           req.body.assessmentTypeB_Data = {
             maxScore: assessmentTypeB_Data.maxScore,
+            numberOfQuestion: assessmentTypeB_Data.numberOfQuestion,
           };
 
           const newAssessment = new Assessment(req.body);
@@ -541,6 +597,7 @@ module.exports = {
         req.body.assessmentTypeA_Data = {
           duration: assessmentTypeA_Data.duration,
           maxScore: assessmentTypeA_Data.maxScore,
+          numberOfQuestion: assessmentTypeA_Data.numberOfQuestion,
         };
 
         const newAssessment = new Assessment(req.body);
@@ -562,6 +619,7 @@ module.exports = {
         req.body.assessmentTypeB_Id = newAssessmentTypeB.id;
         req.body.assessmentTypeB_Data = {
           maxScore: assessmentTypeB_Data.maxScore,
+          numberOfQuestion: assessmentTypeB_Data.numberOfQuestion,
         };
 
         const newAssessment = new Assessment(req.body);
@@ -609,9 +667,7 @@ module.exports = {
       }
       const assessment = new Assessment(req.body);
       await assessment.save();
-      res
-        .status(200)
-        .json({ message: 'Assessment Successfully Created', data: assessment });
+      res.status(200).json({ message: 'Assessment Successfully Created' });
     } catch (err) {
       return next(err);
     }
@@ -718,18 +774,8 @@ module.exports = {
           });
         }
       } else {
-        const assessment = await Assessment.findByIdAndUpdate(
-          id,
-          ...restBodyQuery,
-          {
-            returnDocument: 'after',
-            lean: true,
-          }
-        ).exec();
-        res.status(200).json({
-          message: 'Assessment Details Updated Successfully',
-          data: assessment,
-        });
+        await Assessment.updateOne({ _id: id }, { ...restBodyQuery }).exec();
+        res.status(200).send('Assessment Details Updated Successfully');
       }
     } catch (err) {
       return next(err);
@@ -738,7 +784,7 @@ module.exports = {
   disableAssessment: async (req, res, next) => {
     try {
       const id = req.params.id;
-      await Assessment.findByIdAndUpdate(id, { disabled: true }).exec();
+      await Assessment.updateOne({ _id: id }, { disabled: true }).exec();
       res.status(200).json({
         message: 'Assessment Set to Disabled Successfully',
       });
@@ -749,7 +795,7 @@ module.exports = {
   enableAssessment: async (req, res, next) => {
     try {
       const id = req.params.id;
-      await Assessment.findByIdAndUpdate(id, { disabled: false }).exec();
+      await Assessment.updateOne({ _id: id }, { disabled: false }).exec();
       res.status(200).json({
         message: 'Assessment Set to Enabled Successfully',
       });
@@ -760,39 +806,48 @@ module.exports = {
   deleteAssessment: async (req, res, next) => {
     try {
       const id = req.params.id;
-      const assessment = await Assessment.findById(id).exec();
-      const { assessmentTypeA_Id, assessmentTypeB_Id } = assessment;
-
-      if (assessmentTypeA_Id != undefined) {
-        await IntegerTypeQuestion.deleteMany({
-          assessmentId: assessmentTypeA_Id,
-        }).exec();
-        await McqTypeQuestion.deleteMany({
-          assessmentId: assessmentTypeA_Id,
-        }).exec();
-        await MatchupTypeQuestion.deleteMany({
-          assessmentId: assessmentTypeA_Id,
-        }).exec();
-        await SubjectiveTypeQuestion.deleteMany({
-          assessmentId: assessmentTypeA_Id,
-        }).exec();
-        await MultipleAnswerTypeQuestion.deleteMany({
-          assessmentId: assessmentTypeA_Id,
-        }).exec();
-        await PassageTypeQuestion.deleteMany({
-          assessmentId: assessmentTypeA_Id,
-        }).exec();
-      }
-
-      if (assessmentTypeB_Id != undefined) {
-        await UploadTypeQuestion.deleteMany({
-          assessmentId: assessmentTypeB_Id,
-        }).exec();
-      }
-      await Assessment.deleteOne({ _id: id }).exec();
+      await Assessment.updateOne({ _id: id }, { isDeleted: true }).exec();
       res.status(200).send('Assessment Deleted Successfully');
     } catch (err) {
       return next(err);
     }
   },
+  // deleteAssessment: async (req, res, next) => {
+  //   try {
+  //     const id = req.params.id;
+  //     const assessment = await Assessment.findById(id).exec();
+  //     const { assessmentTypeA_Id, assessmentTypeB_Id } = assessment;
+
+  //     if (assessmentTypeA_Id != undefined) {
+  //       await IntegerTypeQuestion.deleteMany({
+  //         assessmentId: assessmentTypeA_Id,
+  //       }).exec();
+  //       await McqTypeQuestion.deleteMany({
+  //         assessmentId: assessmentTypeA_Id,
+  //       }).exec();
+  //       await MatchupTypeQuestion.deleteMany({
+  //         assessmentId: assessmentTypeA_Id,
+  //       }).exec();
+  //       await SubjectiveTypeQuestion.deleteMany({
+  //         assessmentId: assessmentTypeA_Id,
+  //       }).exec();
+  //       await MultipleAnswerTypeQuestion.deleteMany({
+  //         assessmentId: assessmentTypeA_Id,
+  //       }).exec();
+  //       await PassageTypeQuestion.deleteMany({
+  //         assessmentId: assessmentTypeA_Id,
+  //       }).exec();
+  //     }
+
+  //     if (assessmentTypeB_Id != undefined) {
+  //       await UploadTypeQuestion.deleteMany({
+  //         assessmentId: assessmentTypeB_Id,
+  //       }).exec();
+  //     }
+  //     await Assessment.deleteOne({ _id: id }).exec();
+  //     res.status(200).send('Assessment Deleted Successfully');
+  //   } catch (err) {
+  //     return next(err);
+  //   }
+  // },
 };

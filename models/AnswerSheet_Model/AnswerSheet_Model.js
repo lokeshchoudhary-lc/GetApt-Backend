@@ -4,21 +4,31 @@ const AnswerSheet = new mongoose.Schema({
   fromAssessment: { type: mongoose.Schema.Types.ObjectId },
   candidate: {
     candidateId: { type: mongoose.Schema.Types.ObjectId },
-    name: { type: String },
+    name: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
+    contact: {
+      type: String,
+    },
   },
   totalComputedScore: {
-    type: String,
+    type: Number,
   },
-  totalComputedScoreTypeA: {
-    type: String,
+  submittedTypeA: {
+    type: Boolean,
+    default: false,
   },
-  totalComputedScoreTypeB: {
-    type: String,
+  submittedTypeB: {
+    type: Boolean,
+    default: false,
   },
-  answerTypeA: {
+  answerSheetTypeA_Id: {
     type: mongoose.Schema.Types.ObjectId,
   },
-  answerTypeB: {
+  answerSheetTypeB_Id: {
     type: mongoose.Schema.Types.ObjectId,
   },
 });

@@ -12,14 +12,7 @@ const PassageTypeQuestionSchema = new mongoose.Schema({
       },
       questionType: {
         type: String,
-        enum: [
-          '',
-          'mcq',
-          'multipleAnswer',
-          'matchups',
-          'subjective',
-          'integerType',
-        ],
+        enum: ['', 'mcq', 'multipleAnswer', 'matchup', 'subjective', 'integer'],
         default: '',
       },
     },

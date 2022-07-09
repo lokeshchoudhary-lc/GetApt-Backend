@@ -1,22 +1,23 @@
 const mongoose = require('mongoose');
 
 const AnswerSheetTypeBSchema = new mongoose.Schema({
-  answer: [
+  sequenceNumber: [
     {
-      problemStatement: {
+      questionId: {
         type: mongoose.Schema.Types.ObjectId,
       },
-      scoreOfQuestion: {
+      questionType: {
         type: String,
+        default: 'upload',
       },
-      attachment: {
-        type: String,
+      isFlagged: {
+        type: Boolean,
       },
-      candidateAnswer: {
-        type: String,
+      isAnswered: {
+        type: Boolean,
       },
-      givenScore: {
-        type: String,
+      isAttempted: {
+        type: Boolean,
       },
     },
   ],
