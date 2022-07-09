@@ -6,9 +6,7 @@ const Feedback = new mongoose.Schema({
     ref: 'candidate_profile',
   },
   rating: {
-    enum: ['0', '1', '2', '3', '4', '5'],
     type: String,
-    default: '0',
   },
   comment: {
     type: String,

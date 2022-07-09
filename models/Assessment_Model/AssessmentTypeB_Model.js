@@ -1,24 +1,17 @@
 const mongoose = require('mongoose');
 
 const AssessmentTypeBSchema = new mongoose.Schema({
-  startAt: {
-    type: String,
-  },
-  endAt: {
-    type: String,
-  },
-  question: [
+  sequenceNumber: [
     {
-      problemStatement: {
-        type: String,
+      questionId: {
+        type: mongoose.Schema.Types.ObjectId,
       },
-      scoreOfQuestion: {
+      questionType: {
         type: String,
+        default: 'upload',
       },
     },
   ],
-  uploadedAttachment: [String],
-  urlAttachment: [String],
 });
 
 module.exports = mongoose.model('assessment_type_b', AssessmentTypeBSchema);

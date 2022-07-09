@@ -1,4 +1,4 @@
-const AssessmentTypeA = require('../../../models/AssessmentTypeA_Model');
+const AssessmentTypeA = require('../../../models/Assessment_Model/AssessmentTypeA_Model');
 
 module.exports = {
   getMyAssessmentTypeA: async (req, res, next) => {
@@ -10,7 +10,6 @@ module.exports = {
       return next(err);
     }
   },
-
   updateAssessmentTypeA: async (req, res, next) => {
     try {
       const id = req.params.id;
