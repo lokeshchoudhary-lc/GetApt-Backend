@@ -667,7 +667,10 @@ module.exports = {
       }
       const assessment = new Assessment(req.body);
       await assessment.save();
-      res.status(200).json({ message: 'Assessment Successfully Created' });
+      res.status(200).json({
+        message: 'Assessment Successfully Created',
+        assessmentId: assessment._id,
+      });
     } catch (err) {
       return next(err);
     }
