@@ -1,4 +1,5 @@
-const { verifyAssessmentLink } = require('../../utils/jwt_helper');
+const { verifyAssessmentLink, generateAssessmentLinkToken } = require('../../utils/jwt_helper');
+const {sendMail} = require('../../utils/email-service');
 const Company = require('../../models/Company_Model');
 const Candidate = require('../../models/Candidate_Model/Candidate_Model');
 const Assessment = require('../../models/Assessment_Model/Assessment_Model');
@@ -198,6 +199,7 @@ module.exports = {
     try {
       const candidate = new Candidate(req.body);
       await candidate.save();
+      console.log(candidate, req.body);
       //TODO:upload resume feature
       res.send('Candidate Profile Created Successfully');
     } catch (err) {
@@ -465,4 +467,26 @@ module.exports = {
       return next(err);
     }
   },
+  createAssessmentLink: async (req, res, next) => {
+    try {
+      const {assessmentId, email} = req.body;
+      const payload = {
+        email,
+        assessmentId
+      }
+
+      const assessmentLinkToken = await generateAssessmentLinkToken(payload);
+      const mailOptions = {
+        from: '"GetApt team" <getapt.tech@gmail.com>',
+        to: email,
+        subject: 'Test link',
+        html: `<b>Hey there! </b><br> This is the link to your assessment: 
+        ${process.env.ASSESSMENT_LINK_BASE_URL + assessmentLinkToken}`
+      };
+      await sendMail(mailOptions);
+      res.sendStatus(200);
+    } catch(err) {
+      return next(err);
+    }
+  }
 };

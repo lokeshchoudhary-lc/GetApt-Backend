@@ -10,7 +10,7 @@ function Unauthorized(message = 'Unauthorized') {
 const signAccessToken = (payload) => {
   return new Promise((reslove, reject) => {
     const options = {
-      expiresIn: '900s',
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
       issuer: 'GetApt',
     };
     const secret = process.env.ACCESS_TOKEN_SECRET;
@@ -27,7 +27,7 @@ const signAccessToken = (payload) => {
 const signRefreshToken = (payload) => {
   return new Promise((reslove, reject) => {
     const options = {
-      expiresIn: '7d',
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
       issuer: 'GetApt',
     };
     const secret = process.env.REFRESH_TOKEN_SECRET;
@@ -97,7 +97,7 @@ const authVerification = async (req, res, next) => {
         sameSite: 'strict',
         // secure: true, IN Https only
         httpOnly: true,
-        maxAge: 900000, //15m
+        maxAge: process.env.AUTH_COOKIE_MAXAGE_SEC,
       });
 
       if (payload) req.payload = payload;
@@ -140,7 +140,7 @@ const verifyInviteLink = (link) => {
   });
 };
 
-const assessmentLinkGenerator = (payload) => {
+const generateAssessmentLinkToken = (payload) => {
   return new Promise((reslove, reject) => {
     const options = {
       issuer: 'GetApt',
@@ -204,7 +204,7 @@ module.exports = {
   signRefreshToken,
   authVerification,
   inviteLinkGenerator,
-  assessmentLinkGenerator,
+  generateAssessmentLinkToken,
   verifyInviteLink,
   resetLinkGenerator,
   verifyResetLink,

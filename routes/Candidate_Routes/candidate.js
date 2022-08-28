@@ -2,6 +2,7 @@ const Route = require('express').Router();
 
 const {
   getLinkInfo,
+  createAssessmentLink,
   createCandidateProfile,
   updateCandidateProfile,
   startAssessmentOfType,
@@ -18,6 +19,7 @@ const {
 } = require('../../controllers/Candidate_Controllers/Answer_Controllers/answer.controller');
 
 Route.get('/link/:link', getLinkInfo);
+Route.post('/link', createAssessmentLink);
 Route.get('/start/', startAssessmentOfType);
 Route.get('/:id', getCandidateProfile);
 Route.post('/', createCandidateProfile);
